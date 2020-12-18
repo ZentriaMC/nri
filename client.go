@@ -165,27 +165,37 @@ func (c *Client) invokePlugin(ctx context.Context, name string, r *types.Request
 
 	cmd := exec.CommandContext(ctx, pluginPath, "invoke")
 	cmd.Stdin = bytes.NewBuffer(payload)
-	cmd.Stderr = os.Stderr
+	cmdout := &bytes.Buffer{}
+	cmderr := &bytes.Buffer{}
+	cmd.Stdout = cmdout
+	cmd.Stderr = cmderr
 
-	out, err := cmd.Output()
-	msg := "output:"
-	if len(out) > 0 {
-		msg = fmt.Sprintf("%s %q", msg, out)
+	err = cmd.Run()
+	msg := strings.Builder{}
+	msg.WriteString("plugin '%s' exec details:")
+	if cmdout.Len() > 0 {
+		msg.WriteString(fmt.Sprintf(` stdout: "%s"`, cmdout.Bytes()))
 	} else {
-		msg = fmt.Sprintf("%s <empty>", msg)
+		msg.WriteString(` stdout: <empty>`)
 	}
+	if cmderr.Len() > 0 {
+		msg.WriteString(fmt.Sprintf(` stderr: "%s"`, cmderr.Bytes()))
+	} else {
+		msg.WriteString(` stderr: <empty>`)
+	}
+
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			// ExitError is returned when there is a non-zero exit status
-			msg = fmt.Sprintf("%s exit code: %d", msg, exitErr.ExitCode())
+			msg.WriteString(fmt.Sprintf(` exit code: %d`, exitErr.ExitCode()))
 		} else {
 			// plugin did not get a chance to run, return exec err
 			return nil, err
 		}
 	}
 	var result types.Result
-	if err := json.Unmarshal(out, &result); err != nil {
-		return nil, errors.Errorf("failed to unmarshal plugin output: %s: %s", err.Error(), msg)
+	if err := json.Unmarshal(cmdout.Bytes(), &result); err != nil {
+		return nil, errors.Errorf("failed to unmarshal plugin result: %s: %s", err.Error(), msg.String())
 	}
 	if result.Err() != nil {
 		return nil, result.Err()
