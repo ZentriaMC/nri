@@ -26,11 +26,10 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"sync"
 
+	types "github.com/ZentriaMC/nri/types/v1"
 	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/oci"
-	types "github.com/ZentriaMC/nri/types/v1"
 	"github.com/pkg/errors"
 )
 
@@ -43,25 +42,10 @@ const (
 	Version = "0.1"
 )
 
-var appendPathOnce sync.Once
-
 // New nri client
 func New() (*Client, error) {
-	conf, err := loadConfig(DefaultConfPath)
-	if err != nil {
-		return nil, err
-	}
-
-	appendPathOnce.Do(func() {
-		err = os.Setenv("PATH", fmt.Sprintf("%s:%s", os.Getenv("PATH"), DefaultBinaryPath))
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &Client{
-		conf: conf,
-	}, nil
+	binPaths := append(filepath.SplitList(os.Getenv("PATH")), DefaultBinaryPath)
+	return NewWithPaths(binPaths, DefaultConfPath)
 }
 
 // NewWithPaths creates a new NRI client with specified binary and
@@ -73,14 +57,14 @@ func NewWithPaths(binPaths []string, confPath string) (*Client, error) {
 	}
 
 	return &Client{
-		conf: conf,
+		conf:     conf,
 		binPaths: binPaths,
 	}, nil
 }
 
 // Client for calling nri plugins
 type Client struct {
-	conf *types.ConfigList
+	conf     *types.ConfigList
 	binPaths []string
 }
 
