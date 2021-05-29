@@ -1,9 +1,9 @@
 # nri - Node Resource Interface
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/containerd/nri)](https://pkg.go.dev/github.com/containerd/nri)
-[![Build Status](https://github.com/containerd/nri/workflows/CI/badge.svg)](https://github.com/containerd/nri/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/containerd/nri/branch/master/graph/badge.svg)](https://codecov.io/gh/containerd/nri)
-[![Go Report Card](https://goreportcard.com/badge/github.com/containerd/nri)](https://goreportcard.com/report/github.com/containerd/nri)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/ZentriaMC/nri)](https://pkg.go.dev/github.com/ZentriaMC/nri)
+[![Build Status](https://github.com/ZentriaMC/nri/workflows/CI/badge.svg)](https://github.com/ZentriaMC/nri/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/ZentriaMC/nri/branch/master/graph/badge.svg)](https://codecov.io/gh/ZentriaMC/nri)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ZentriaMC/nri)](https://goreportcard.com/report/github.com/ZentriaMC/nri)
 
 *This project is currently in DRAFT status*
 

@@ -26,12 +26,12 @@ jobs:
 
       - uses: actions/checkout@v2
         with:
-          path: src/github.com/containerd/nri
+          path: src/github.com/ZentriaMC/nri
           fetch-depth: 25
 
       - uses: containerd/project-checks@v1
         with:
-          working-directory: src/github.com/containerd/nri
+          working-directory: src/github.com/ZentriaMC/nri
 
   linters:
     name: Linters
@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: src/github.com/containerd/nri
+          path: src/github.com/ZentriaMC/nri
 
       - name: Set env
         shell: bash
@@ -57,7 +57,7 @@ jobs:
       - uses: golangci/golangci-lint-action@v2
         with:
           version: v1.29
-          working-directory: src/github.com/containerd/nri
+          working-directory: src/github.com/ZentriaMC/nri
 
   tests:
     name: Tests
@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          path: src/github.com/containerd/nri
+          path: src/github.com/ZentriaMC/nri
 
       - uses: actions/setup-go@v2
         with:
@@ -82,4 +82,4 @@ jobs:
       - run: |
           go test -v -race -covermode=atomic -coverprofile=coverage.txt -test.root -exec "sudo -n"  ./...
           bash <(curl -s https://codecov.io/bash)
-        working-directory: src/github.com/containerd/nri
+        working-directory: src/github.com/ZentriaMC/nri
