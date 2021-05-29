@@ -259,7 +259,7 @@ func lookFromPaths(paths []string, file string) (res string, err error) {
 		if err == nil {
 			return file, nil
 		}
-		return "", &exec.Error{file, err}
+		return "", &exec.Error{Name: file, Err: err}
 	}
 
 	for _, dir := range paths {
@@ -272,5 +272,5 @@ func lookFromPaths(paths []string, file string) (res string, err error) {
 			return path, nil
 		}
 	}
-	return "", &exec.Error{file, exec.ErrNotFound}
+	return "", &exec.Error{Name: file, Err: exec.ErrNotFound}
 }
