@@ -27,7 +27,7 @@ import (
 
 	"github.com/containerd/containerd"
 	"github.com/containerd/containerd/oci"
-	types "github.com/containerd/nri/types/v1"
+	types "github.com/ZentriaMC/nri/types/v1"
 	"github.com/pkg/errors"
 )
 
