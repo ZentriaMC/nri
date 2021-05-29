@@ -6,9 +6,9 @@ linters:
     - unconvert
     - gofmt
     - goimports
-    - golint
     - ineffassign
     - vet
+    - revive
     - unused
     - misspell
   disable:
