@@ -61,6 +61,21 @@ func New() (*Client, error) {
 	}, nil
 }
 
+// NewWithPaths creates a new NRI client with specified binary and
+// configuration paths
+func NewWithPaths(binPath, confPath string) (*Client, error) {
+	conf, err := loadConfig(confPath)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: use binPath
+
+	return &Client{
+		conf: conf,
+	}, nil
+}
+
 // Client for calling nri plugins
 type Client struct {
 	conf *types.ConfigList
