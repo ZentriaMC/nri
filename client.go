@@ -72,16 +72,16 @@ func NewWithPaths(binPaths []string, confPath string) (*Client, error) {
 		return nil, err
 	}
 
-	// TODO: use binPaths
-
 	return &Client{
 		conf: conf,
+		binPaths: binPaths,
 	}, nil
 }
 
 // Client for calling nri plugins
 type Client struct {
 	conf *types.ConfigList
+	binPaths []string
 }
 
 // Sandbox information
@@ -172,7 +172,14 @@ func (c *Client) invokePlugin(ctx context.Context, name string, r *types.Request
 	if err != nil {
 		return nil, err
 	}
-	cmd := exec.CommandContext(ctx, name, "invoke")
+
+	// Try to find the plugin path
+	pluginPath, err := lookFromPaths(c.binPaths, name)
+	if err != nil {
+		return nil, err
+	}
+
+	cmd := exec.CommandContext(ctx, pluginPath, "invoke")
 	cmd.Stdin = bytes.NewBuffer(payload)
 	cmd.Stderr = os.Stderr
 
