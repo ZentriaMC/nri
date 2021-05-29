@@ -21,8 +21,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/containerd/containerd"
@@ -63,13 +66,13 @@ func New() (*Client, error) {
 
 // NewWithPaths creates a new NRI client with specified binary and
 // configuration paths
-func NewWithPaths(binPath, confPath string) (*Client, error) {
+func NewWithPaths(binPaths []string, confPath string) (*Client, error) {
 	conf, err := loadConfig(confPath)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO: use binPath
+	// TODO: use binPaths
 
 	return &Client{
 		conf: conf,
@@ -243,4 +246,40 @@ func createSpec(spec *oci.Spec) (*types.Spec, error) {
 		s.Resources = json.RawMessage(data)
 	}
 	return &s, nil
+}
+
+// findExecutable is copy from private os/exec.findExecutable
+func findExecutable(file string) error {
+	d, err := os.Stat(file)
+	if err != nil {
+		return err
+	}
+	if m := d.Mode(); !m.IsDir() && m&0111 != 0 {
+		return nil
+	}
+	return fs.ErrPermission
+}
+
+// lookFromPaths is based on os/exec.LookPath, but allows specifying
+// the paths where to look from, instead of relying on PATH environment
+func lookFromPaths(paths []string, file string) (res string, err error) {
+	if strings.Contains(file, "/") {
+		err := findExecutable(file)
+		if err == nil {
+			return file, nil
+		}
+		return "", &exec.Error{file, err}
+	}
+
+	for _, dir := range paths {
+		if dir == "" {
+			// Unix shell semantics: path element "" means "."
+			dir = "."
+		}
+		path := filepath.Join(dir, file)
+		if err := findExecutable(path); err == nil {
+			return path, nil
+		}
+	}
+	return "", &exec.Error{file, exec.ErrNotFound}
 }
