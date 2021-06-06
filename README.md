@@ -9,6 +9,13 @@
 
 This project is a WIP for a new, CNI like, interface for managing resources on a node for Pods and Containers.
 
+
+## Why did Zentria fork this?
+
+We are early adopters of NRI concept and thus we *may* need to make opinionated changes internally.
+Licensing will remain the same, so that upstream project could still take changes from here without any
+restrictions.
+
 ## Documentation
 
 The basic interface, concepts and plugin design of the Container Network Interface (CNI) is an elegant way to handle multiple implementations of the network stack for containers.
